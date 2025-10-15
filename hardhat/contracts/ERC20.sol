@@ -11,57 +11,65 @@ contract ERC20 {
     string public name;
     string public symbol;
     uint8 public decimals;
+    address owner;
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
+        owner = msg.sender;
     }
 
-    function mint(address to, uint256 amount) public  {
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can do this");
+
+        _;
+    }
+
+    function mint(address to, uint256 amount) public onlyOwner {
         balanceOf[to] += amount;
         totalSupply += amount;
         
         emit Transfer(address(0), to, amount);
     }
 
-    function burn(address from, uint256 amount) public  {
+    function burn(address from, uint256 amount) public onlyOwner {
         balanceOf[from] -= amount;
         totalSupply -= amount;
 
         emit Transfer(from, address(0), amount);
     }
 
-    function approve(address to, uint256 amount) public returns (bool) {
+    function approve(address spender, uint256 amount) public returns (bool) {
         require(balanceOf[msg.sender] >= amount, "Not enough amount");
-        
-        emit Approval(msg.sender, to, amount);
 
-        allowance[msg.sender][to] += amount;
+        allowance[msg.sender][spender] = amount;
+
+        emit Approval(msg.sender, spender, amount);
 
         return true;
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {
         require(balanceOf[msg.sender] >= amount, "Not enough amount");
-        
-        emit Transfer(msg.sender, to, amount);
-    
+
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
 
+        emit Transfer(msg.sender, to, amount);
+        
         return true;
     }
 
-    function transferFrom(address from, address to, uint256 amount) public returns (bool) {
-        require(balanceOf[from] >= amount, "Not enough balance");
-        require(allowance[from][msg.sender] >= amount, "Not enough allowance");
+    function transferFrom(address spender, address recepient, uint256 amount) public returns (bool) {
+        require(balanceOf[spender] >= amount, "Not enough balance");
+        require(allowance[spender][msg.sender] >= amount, "Not enough allowance");
 
-        emit Transfer(from, to, amount);
+        allowance[spender][msg.sender]  -= amount;
+        balanceOf[spender] -= amount;
+        balanceOf[recepient] += amount;
 
-        balanceOf[from] -= amount;
-        balanceOf[to] += amount;
-        allowance[from][msg.sender] -= amount;
+        emit Transfer(spender, recepient, amount);
     
         return true;
     }

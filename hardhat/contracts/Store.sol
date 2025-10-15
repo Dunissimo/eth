@@ -34,7 +34,7 @@ contract Store {
     function buyProduct(uint256 id) payable public {
         usersProducts[msg.sender].push(id);
 
-        erc20.transfer(owner, products[id].price);
+        erc20.transferFrom(msg.sender, owner, products[id].price);
     }
 
     function getProducts() view public returns (uint256[] memory) {
