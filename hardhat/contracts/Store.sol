@@ -4,12 +4,12 @@ pragma solidity ^0.8.7;
 import "./ERC20.sol";
 
 contract Store {
+    address public owner;
     struct Product {
         string name;
         uint256 price;
     }
 
-    address public owner;
     mapping(uint256 => Product) private products;
     uint256[] private productsIds; 
     mapping(address => uint256[] productIds) public usersProducts;

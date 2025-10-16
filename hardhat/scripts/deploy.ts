@@ -24,21 +24,18 @@ const deploy = async () => {
     console.log(`user1 balance: ${await contract.balanceOf(others[0])}`);
     console.log(`user2 balance: ${await contract.balanceOf(others[1])}`);
 
-    await contract.mint(owner, 1000000);
-
-    await contract.approve(others[0], 1000000);
-    await contract.approve(others[1], 1000000);
-    await contract.approve(others[2], 1000000);
-    await contract.approve(others[3], 1000000);
-
     console.log(`Tokenomica: ${await contract.totalSupply()}`);
 
-    // const data = {
-    //     ERC20Address: await contract.getAddress(),
-    // }
+    const store = await ethers.getContractFactory("Store");
+    const storeContract = await store.deploy(await contract.getAddress());
 
-    // const frontendDir = path.join(__dirname, '../../frontend/src/conf.json');
-    // fs.writeFileSync(frontendDir, JSON.stringify(data));
+    const data = {
+        ERC20Address: await contract.getAddress(),
+        StoreAddress: await storeContract.getAddress(),
+    }
+
+    const frontendDir = path.join(__dirname, '../../frontend/src/conf.json');
+    fs.writeFileSync(frontendDir, JSON.stringify(data));
 }
 
 deploy().catch(error => {
