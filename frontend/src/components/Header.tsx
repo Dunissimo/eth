@@ -7,7 +7,7 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useEffect } from "react";
 
 function Header() {
-    const { signer, isLoading, setIsLoading, connectWallet } = useAuthContext();
+    const { signer, isLoading, isOwner, setIsLoading, connectWallet } = useAuthContext();
 
     const auth = async () => {
         setIsLoading(true);
@@ -49,6 +49,8 @@ function Header() {
                         </NavigationMenuItem>
                     </NavigationMenuList>
                 </NavigationMenu>
+
+                {isOwner ? <span>Owner mode</span> : null}
 
                 <Button onClick={auth} className={cn(signer && "p-0")} disabled={isLoading}>
                     {signer ? <NavLink className="px-4 py-2" to={'/profile'}>{renderButtonText()}</NavLink> : renderButtonText()}

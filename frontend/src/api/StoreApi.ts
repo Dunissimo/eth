@@ -1,7 +1,8 @@
-import type { Signer } from "ethers";
+import { ethers, type Signer } from "ethers";
 import type { Store } from "./contracts/Store";
 import { Store__factory } from "./contracts/Store__factory";
-import type { getAllProductsIdsResponse, getOneProductResponse, getProductsResponse } from "../types/store-types";
+import type { Products, getOneProductResponse, getProductsResponse } from "../types/store-types";
+import type { BigNumberish } from "ethers";
 
 export class StoreApi {
     public contract: Store;
@@ -20,15 +21,37 @@ export class StoreApi {
         return this.contract.getProducts();
     }
 
-    async getAllProducts(): Promise<getAllProductsIdsResponse> {
-        return this.contract.getAllProductsIds();
+    async getAllUserProducts(): Promise<Products> {
+        const products: Products = new Map();
+        const productIds = await this.getUserProducts();
+
+        for (const id of productIds) {
+            const product = await this.contract.getOneProduct(id);
+
+            products.set(ethers.toNumber(id), {name: product.name, price: product.price});
+        }
+
+        return products;
+    }
+
+    async getAllProducts(): Promise<Products> {
+        const products: Products = new Map();
+        const productIds = await this.contract.getAllProductsIds();
+
+        for (const id of productIds) {
+            const product = await this.contract.getOneProduct(id);
+
+            products.set(ethers.toNumber(id), {name: product.name, price: product.price});
+        }
+
+        return products;
     }
 
     async getOneProduct(id: bigint): Promise<getOneProductResponse> {
         return this.contract.getOneProduct(id);
     }
 
-    async buyProduct(id: bigint) {
+    async buyProduct(id: BigNumberish) {
         return this.contract.buyProduct(id);
     }
 

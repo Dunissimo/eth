@@ -6,25 +6,30 @@ import Layout from './components/Layout.tsx'
 
 import './index.css'
 import Profile from './pages/Profile.tsx'
+import Products from './pages/Products.tsx'
 
 const router = createBrowserRouter([
-  {
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <Home />
-      },
-      {
-        path: '/profile',
-        element: <Profile />
-      }
-    ]
-  }
+    {
+        element: <Layout />,
+        children: [
+            {
+                index: true,
+                element: <Home />
+            },
+            {
+                path: '/profile',
+                element: <Profile />
+            },
+            {
+                path: "/products",
+                element: <Products />
+            }
+        ]
+    }
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
+    <StrictMode>
+        <RouterProvider router={router} />
+    </StrictMode>,
 );

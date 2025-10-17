@@ -10,6 +10,7 @@ const deploy = async () => {
     console.log(await contract.getAddress());
     console.log(await contract.name());
     
+    await contract.mint(owner, 100000);
     await contract.mint(others[0], 1000);
 
     console.log(`owner balance: ${await contract.balanceOf(owner)}`);
@@ -28,6 +29,14 @@ const deploy = async () => {
 
     const store = await ethers.getContractFactory("Store");
     const storeContract = await store.deploy(await contract.getAddress());
+
+    await storeContract.createProduct(1, "Product #1", 100);
+    await storeContract.createProduct(2, "Product #2", 20);
+    await storeContract.createProduct(3, "Product #3", 50);
+    await storeContract.createProduct(4, "Product #4", 500);
+    await storeContract.createProduct(5, "Product #5", 10);
+
+    console.log(await storeContract.getAllProductsIds());
 
     const data = {
         ERC20Address: await contract.getAddress(),

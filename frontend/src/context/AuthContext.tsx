@@ -1,3 +1,4 @@
+import { useStoreApi } from "@/hooks/useStoreApi";
 import type { JsonRpcSigner } from "ethers";
 import { BrowserProvider } from "ethers";
 import { createContext, type PropsWithChildren, useState, type Dispatch, type SetStateAction } from "react";
@@ -6,6 +7,7 @@ interface AuthContextType {
     signer: JsonRpcSigner | null;
     address: string | null;
     isLoading: boolean;
+    isOwner: boolean;
     connectWallet: () => Promise<void>;
     disconnectWallet: () => void;
     setIsLoading: Dispatch<SetStateAction<boolean>>;
@@ -14,9 +16,13 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 function AuthContextProvider({ children }: PropsWithChildren) {
+    
     const [signer, setSigner] = useState<JsonRpcSigner | null>(JSON.parse(localStorage.getItem('signer')!));
+    const api = useStoreApi({ signer });
+
     const [address, setAddress] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
 
     const connectWallet = async () => {
         try {
@@ -30,9 +36,11 @@ function AuthContextProvider({ children }: PropsWithChildren) {
             const provider = new BrowserProvider(window.ethereum);
             const _signer = await provider.getSigner();
             const _address = await _signer.getAddress();
+            const _ownerAddress = await api?.getOwner();
 
             setSigner(_signer);
             setAddress(_address);
+            setIsOwner(Boolean(_ownerAddress));
 
             localStorage.setItem('auth', 'true');
         } catch (error) {
@@ -51,7 +59,7 @@ function AuthContextProvider({ children }: PropsWithChildren) {
     }
 
     return (
-        <AuthContext.Provider value={{signer, address, isLoading, setIsLoading, connectWallet, disconnectWallet}}>
+        <AuthContext.Provider value={{signer, address, isLoading, isOwner, setIsLoading, connectWallet, disconnectWallet}}>
             { children }
         </AuthContext.Provider>
     );
