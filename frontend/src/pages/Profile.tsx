@@ -7,7 +7,7 @@ import { ERC20Address } from '../conf.json';
 import Product from "@/components/Product";
 import { useStoreApi } from "@/hooks/useStoreApi";
 import type { Products } from "@/types/store-types";
-import { checkOwn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 
 function Profile() {
     const { signer, isLoading, setIsLoading } = useAuthContext();
@@ -75,18 +75,20 @@ function Profile() {
 
     return (
         <Container className="pt-8">
-            <div>
-                <h2>Владелец сети: {ownerAddress}</h2>
-                <h2>Ваш адрес: {address}</h2>
-                <h2>Токен: {tokenName}</h2>
-                <h3>Символ: {symbol}</h3>
-                <h3>Всего токенов: {totalSupply}</h3>
-            </div>
-        
-            <span>Ваш баланс: {amount}</span>
+            <h2 className="mb-4 text-3xl font-bold">Data</h2>
+            <Card className="w-1/2 mb-12">
+                <CardContent className="flex flex-col gap-3">
+                    <h2>Владелец сети: {ownerAddress}</h2>
+                    <h2>Ваш адрес: {address}</h2>
+                    <h2>Токен: {tokenName}</h2>
+                    <h3>Символ: {symbol}</h3>
+                    <h3>Всего токенов: {totalSupply}</h3>
+                    <span>Ваш баланс: {amount}</span>
+                </CardContent>
+            </Card>
 
             <div>
-                <h2 className="mb-8 text-5xl font-bold">Products List</h2>
+                <h2 className="mb-4 text-3xl font-bold">Products List</h2>
 
                 <div className="products-list flex gap-6">
                     {Array.from(ownProducts.entries()).map(item => {
